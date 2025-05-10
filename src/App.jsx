@@ -8,7 +8,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Body />}>
-          <Route index element={<div className="text-white p-10">Welcome to Netflix Clone <Home /></div> } />
+          <Route index element={<div className="text-white p-10">Welcome to Netflix <Home /></div> } />
           <Route path="update" element={<Insert />} />
         </Route>
       </Routes>

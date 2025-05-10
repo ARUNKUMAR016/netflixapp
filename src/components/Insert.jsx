@@ -5,6 +5,7 @@ const Insert = () => {
   const [title, setTitle] = useState('');
   const [about, setAbout] = useState('');
   const [genre, setGenre] = useState('');
+  const [movieUrl, setMovieUrl] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,12 +14,14 @@ const Insert = () => {
       await axios.post("http://localhost:4444/api/admin/insert", {
         title,
         about,
-        genre
+        genre,
+        movieUrl
       });
       alert("Movie inserted successfully!");
       setTitle('');
       setAbout('');
       setGenre('');
+      setMovieUrl('');
     } catch (error) {
       console.error("Insert failed:", error);
       alert("Failed to insert movie.");
@@ -40,6 +43,7 @@ const Insert = () => {
             required
           />
         </div>
+
         <div>
           <label className="block mb-1 text-sm text-gray-300">About</label>
           <textarea
@@ -51,6 +55,7 @@ const Insert = () => {
             required
           ></textarea>
         </div>
+
         <div>
           <label className="block mb-1 text-sm text-gray-300">Genre</label>
           <input
@@ -62,6 +67,19 @@ const Insert = () => {
             required
           />
         </div>
+
+        <div>
+          <label className="block mb-1 text-sm text-gray-300">Movie URL</label>
+          <input
+            type="text"
+            value={movieUrl}
+            onChange={(e) => setMovieUrl(e.target.value)}
+            placeholder="Enter movie image or trailer URL"
+            className="input input-bordered w-full text-white"
+            required
+          />
+        </div>
+
         <button
           type="submit"
           className="btn bg-red-600 hover:bg-red-700 text-white w-full"

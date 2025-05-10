@@ -12,10 +12,10 @@ const Home = () => {
       console.error("Data fetch failed:", error);
     }
   };
+
   const handleDelete = async (id) => {
     try {
       await axios.delete(`http://localhost:4444/api/admin/delete/${id}`);
-      // Remove deleted movie from state
       setMovies((prev) => prev.filter((movie) => movie._id !== id));
     } catch (error) {
       console.error("Delete failed:", error);
@@ -30,17 +30,16 @@ const Home = () => {
     <div className="grid gap-4 p-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
       {movies.map((movie) => (
         <div key={movie._id} className="card card-side bg-base-100 shadow-sm">
-          <figure>
+          <figure className="w-40">
             <img
-              src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
+              src={movie.movieUrl}
               alt={movie.title}
+              className="h-full w-full object-cover"
             />
           </figure>
           <div className="card-body">
             <h2 className="card-title">{movie.title}</h2>
-            <p>
-              <strong>Genre:</strong> {movie.genre}
-            </p>
+            <p><strong>Genre:</strong> {movie.genre}</p>
             <p>{movie.about}</p>
             <div className="card-actions justify-end">
               <button
