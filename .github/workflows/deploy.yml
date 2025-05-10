@@ -3,35 +3,41 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - development  # Trigger deployment on push to the development branch
+      - development
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up SSH key
-        uses: webfactory/ssh-agent@v0.5.3
-        with:
-          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}  # Use your PEM key from GitHub Secrets
-
-      - name: Set up Node.js environment
+      - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '23'  # Set your desired Node.js version
+          node-version: '23'
 
       - name: Install dependencies
-        run: |
-          npm install  # Install dependencies
+        run: npm install
 
-      - name: Build the React app 
-        run: |
-          npm run build  # Build the React app
+      - name: Build React app
+        run: npm run build
 
-      - name: Upload files to EC2
+      - name: Set up SSH agent
+        uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+
+      - name: Upload files via SCP
         run: |
-          # Specify the path of your files to upload (upload build folder)
-          scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no -r ./dist/* ubuntu@13.51.171.2:/home/ubuntu/onstep/react/
+          # Upload to a subfolder you own to avoid "Permission denied"
+          scp -o StrictHostKeyChecking=no -r ./dist/* ubuntu@13.51.171.2:/home/ubuntu/onstep/react-temp/
+
+      - name: Move uploaded files into final folder (optional)
+        run: |
+          ssh -o StrictHostKeyChecking=no ubuntu@13.51.171.2 << 'EOF'
+            sudo rm -rf /home/ubuntu/onstep/react/*
+            sudo mv /home/ubuntu/onstep/react-temp/* /home/ubuntu/onstep/react/
+            sudo rm -rf /home/ubuntu/onstep/react-temp
+          EOF
